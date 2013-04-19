@@ -14,10 +14,15 @@ def path(blk, wht)
   return count
 end
 
+def form(side)
+  return (2**side)
+end
+
 sidelength = ARGV.shift.to_i
 
 now = Time.now
 puts "number of paths : " + path(sidelength, sidelength).to_s
+puts "estimate : " + form(sidelength).to_s
 puts "time : " + (Time.now - now).to_s
 
 #puts CACHED.inspect
