@@ -14,8 +14,6 @@ def prime2(nprime)
 
     primes.each{ |prime|
       break if prime > root
-#      break if prime > num / prime
-
       if num % prime == 0
         isprime = false
         break
@@ -53,8 +51,6 @@ def prime1(nprime)
     primes << num if prime
     num += 1
 
-#    printf("\r%d", primes.size)
-
   end
 
   return primes
@@ -62,11 +58,6 @@ end
 
 nprime = ARGV.shift.to_i
 
-#now = Time.now
-#prime1(nprime)
-#now2 = Time.now
-#puts(now2 - now)
 primes = prime2(nprime)
-#puts(Time.now - now2)
 puts primes.inspect
 
