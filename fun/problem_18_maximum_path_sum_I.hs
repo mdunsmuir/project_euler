@@ -11,7 +11,7 @@ parseData s = map (\s -> map read (words s)) $ lines s
 maxPathSum list = 
   let addListsFold upper lower = zipWith (+) upper $ maxList lower
         where 
-          maxList (x:[])   = [x]
+          maxList (x:[])   = []
           maxList (x:y:xs) = (max x y) : (maxList $ y:xs)
 
   in head $ foldr1 addListsFold list
