@@ -2,9 +2,9 @@ import System.Environment(getArgs)
 
 main = do args <- getArgs
           if length args > 0
-            then do inpstr <- readFile $ head args
-                    putStrLn $ show (maxPathSum (parseData inpstr))
-            else putStrLn "I need a filename with triangle data!"
+          then do inpstr <- readFile $ head args
+                  putStrLn $ show (maxPathSum (parseData inpstr))
+          else putStrLn "I need a filename with triangle data!"
 
 parseData s = map (\s -> map read (words s)) $ lines s
 
