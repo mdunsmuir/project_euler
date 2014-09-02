@@ -1,12 +1,16 @@
-module Eratosthenes where
+module Eratosthenes (Sieve, getSieve, isPrime) where
 
 import Control.Monad
 import Control.Monad.ST
 import qualified Data.Vector as V
 import qualified Data.Vector.Mutable as VM
 
-getSieve max = do
+type Sieve = V.Vector Bool
+
+getSieve :: Int -> Sieve
+getSieve max = runST $ do
   sieve <- VM.replicate (max + 1) True
+  forM_ [0, 1] (\n -> VM.write sieve n False)
   fillSieve 2 max sieve
   V.freeze sieve
 
