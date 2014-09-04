@@ -18,11 +18,9 @@ pMax = 10000
 primesUpToMax = takeWhile (<= pMax) primes
 
 pairs :: [Pair]
-pairs = do
-  a <- primesUpToMax
-  b <- dropWhile (<= a) primesUpToMax
-  guard $ pairConcats (a, b)
-  return (a, b)
+pairs = [(a, b) | a <- primesUpToMax,
+                  b <- primesUpToMax,
+                  b > a, pairConcats (a, b)]
 
 pairSearch :: PairMap -> [Pair] -> Int -> [[Int]]
 pairSearch _ [] _     = []
