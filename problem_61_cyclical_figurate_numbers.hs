@@ -1,32 +1,41 @@
+import Control.Monad.State.Strict
 import Data.List
-import qualified Data.Map.Lazy as M
-import qualified Data.Set as S
 import Data.Digits
 
-intMap = takeWhile digitTest . dropWhile (not . digitTest) . (flip map) [1..]
-  where digitTest = (4 ==) . length . digits 10
+data Figurate = Triangle | Square | Pentagon | Hexagon
+              | Heptagon | Octagon deriving (Eq, Ord, Show)
 
-triNums = intMap $ \n -> n * (n + 1) `div` 2
-squaNums = intMap $ \n -> n^2
-pentNums = intMap $ \n -> n * (3 * n - 1) `div` 2
-hexNums = intMap $ \n -> n * (2 * n - 1)
-heptNums = intMap $ \n -> n * (5 * n - 3) `div` 2
-octNums = intMap $ \n -> n * (3 * n - 2)
+setify :: (Int -> Int) -> [Int]
+setify f = dropWhile (1000 >) $ takeWhile (9999 >) $ map f [1..]
 
---allNums :: S.Set Int
-allNums = foldl1' S.union $ map S.fromList [triNums, squaNums, pentNums, hexNums, heptNums, octNums]
+triangles = setify (\n -> n * (n + 1) `div` 2)
+squares = setify (^2)
+pentagons = setify (\n -> n * (3 * n - 1) `div` 2)
+hexagons = setify (\n -> n * (2 * n - 1))
+heptagons = setify (\n -> n * (5 * n - 3) `div` 2)
+octagons = setify (\n -> n * (3 * n - 2))
 
---getCycleMap :: M.Map (Int, Int) (S.Set Int)
-getCycleMap = S.fold f M.empty allNums
+figurateMap = [(Triangle, triangles), (Square, squares), 
+               (Pentagon, pentagons), (Hexagon, hexagons), 
+               (Heptagon, heptagons), (Octagon, octagons)]
+
+x `hasNext` y = let dx = digits 10 x
+                    dy = digits 10 y
+                in  (drop 2 dx) == (take 2 dy)
+
+findCycles shapes = filter (not . null) $ iter [] shapes
   where
-    f n m = let (a:b:_) = take 2 $ digits 10 n
-                ns = M.findWithDefault (S.empty) (a, b) m
-                ns' = S.insert n ns
-            in  M.insert (a, b) ns' m
+    iter prevs [] = if (head prevs) `hasNext` (last prevs)
+                      then return (reverse prevs)
+                      else return []
 
-cycles ds@(a, b) origDigits m = do
-  n <- S.toList $ M.findWithDefault S.empty ds m
-  let (a':b':[]) = drop 2 $ digits 10 n
-  if (a', b') == origDigits
-    then [n]
-    else n : cycles (a', b') origDigits m
+    iter prevs fs = do
+      f <- if null prevs then return (head fs) else fs
+      let (Just figNums) = lookup f figurateMap
+          fs' = delete f fs
+      next <- if null prevs 
+                then figNums 
+                else filter ((head prevs) `hasNext`) figNums
+      iter (next : prevs) fs'
+
+main = putStrLn $ show $ sum $ head $ findCycles $ map fst figurateMap
