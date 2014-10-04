@@ -1,32 +1,26 @@
 import Control.Monad.State.Strict
 import qualified Data.Map.Lazy as M
 
-type CollatzState = State (M.Map Int [Int], (Int, Int))
+type CollatzState = State (M.Map Int Int, (Int, Int))
 
-collatzNext :: Int -> Int
 collatzNext x 
   | even x = x `div` 2
   | otherwise = 3 * x + 1
 
-collatz :: Int -> CollatzState [Int]
-collatz x
-  | x == 1 = return [1]
+collatzLen x len
+  | x == 1 = return $ len + 1
   | otherwise = do
       (map, _) <- get
-      let maybeSeq = M.lookup x map
-      case maybeSeq of
-        Just s -> return s
-        Nothing -> do
-          let next = collatzNext x
-          rest <- collatz next          
-          return $ x : rest
+      let maybeLen = M.lookup x map
+      case maybeLen of
+        Just l -> return $ len + l
+        Nothing -> let next = collatzNext x
+                   in  collatzLen next (len + 1)
 
-storeSequenceFor :: Int -> CollatzState ()
 storeSequenceFor x = do
-  sequence <- collatz x
+  len <- collatzLen x 0
   (map, m@(_, curMax)) <- get
-  let map' = M.insert x sequence map
-      len = length sequence
+  let map' = M.insert x len map
   if len > curMax
     then put (map', (x, len))
     else put (map', m)
