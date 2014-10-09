@@ -6,8 +6,7 @@ import Data.Digits (digits)
 
 answer target = foldM add M.empty $ map (^3) [1..]
   where add m x = let key = sort $ digits 10 x
-                      found = M.findWithDefault [] key m
-                      new = x : found
+                      new = x : M.findWithDefault [] key m
                   in  if length new == target
                         then Left $ minimum new
                         else Right $ M.insert key new m
