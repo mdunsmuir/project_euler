@@ -6,7 +6,7 @@ import qualified Data.Map.Lazy as M
 import System.Process
 import Text.RegexPR (matchRegexPR)
 
-regex = "^problem_([0-9]+).*\\.(hs|rb|lua|py|c)$"
+regex = "^problem_([0-9]+).*\\.(hs|rb|lua|py|c|go)$"
 dirSize = 25
 
 -- main code
